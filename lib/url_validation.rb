@@ -59,6 +59,7 @@ require 'active_model/validator'
 # h3. Other options
 #
 # | @:request_callback@ | A proc that receives the request object (for ==HTTP(S)== requests, the @HTTPI::Request@ object) before it is executed. You can use this proc to set, e.g., custom headers or timeouts on the request. |
+# | @:response_callback@ | A proc that receives the response object after it is executed by @:check_path@, when it is enabled.  This is useful for checking redirect URL's, etc. |
 
 class UrlValidator < ActiveModel::EachValidator
   # @private
@@ -176,6 +177,7 @@ class UrlValidator < ActiveModel::EachValidator
   
   def url_response_valid?(response, options)
     return true unless response.kind_of?(HTTPI::Response) and options[:check_path]
+    options[:response_callback].call(response) if options[:response_callback].respond_to?(:call)
     response_codes = options[:check_path] == true ? [400..499, 500..599] : Array.wrap(options[:check_path]).flatten
     return response_codes.none? do |code| # it's good if it's not a bad response
       case code # and it's a bad response if...
