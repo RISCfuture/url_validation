@@ -140,7 +140,7 @@ class UrlValidator < ActiveModel::EachValidator
   private
   
   def url_format_valid?(uri, options)
-    return false unless Array.wrap(options[:scheme] || %w( http https )).include?(uri.scheme)
+    return false unless Array.wrap(options[:scheme] || %w( http https )).include?(uri.try(:scheme))
     
     case uri.scheme
       when 'http', 'https'
