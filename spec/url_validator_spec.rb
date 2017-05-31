@@ -61,10 +61,9 @@ describe UrlValidator do
             http/sdg.d
             http:://dsfg.dsfg/
             http//sdg..g
-            http://://sdfg.f
-            http://dsaf.com://sdg.com).each do |uri|
+            http://://sdfg.f).each do |uri|
           @record.errors.clear
-          @validator.validate_each(@record, :field, 'www.apple.com')
+          @validator.validate_each(@record, :field, uri)
           expect(@record.errors[:field].first).to include('invalid_url')
         end
       end
@@ -220,7 +219,7 @@ describe UrlValidator do
 
     context '[:request_callback]' do
       it "should be yielded the HTTPI request" do
-        called = false
+        called     = false
         @validator = UrlValidator.new(attributes: %i(field), check_host: true, request_callback: ->(request) { called = true; expect(request).to be_kind_of(HTTPI::Request) })
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
         expect(called).to eql(true)
