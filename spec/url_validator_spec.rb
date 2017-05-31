@@ -67,6 +67,12 @@ describe UrlValidator do
           expect(@record.errors[:field].first).to include('invalid_url')
         end
       end
+
+      it "should not allow invalid scheme formats" do
+        @validator = UrlValidator.new(attributes: %i(field))
+        @validator.validate_each(@record, :field, ' https://www.apple.com')
+        expect(@record.errors[:field].first).to include('invalid_url')
+      end
     end
   end
 

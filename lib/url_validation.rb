@@ -135,11 +135,12 @@ class UrlValidator < ActiveModel::EachValidator
 
     begin
       uri = Addressable::URI.parse(value)
+
       if uri.scheme.nil? and options[:default_scheme]
         uri = Addressable::URI.parse("#{options[:default_scheme]}://#{value}")
       end
     rescue Addressable::URI::InvalidURIError
-      record.errors.add(attribute, options[:invalid_url_message] || :invalid_url) unless url_format_valid?(uri, options)
+      record.errors.add(attribute, options[:invalid_url_message] || :invalid_url) if uri.nil? || !url_format_valid?(uri, options)
       return
     end
 
