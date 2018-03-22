@@ -34,10 +34,11 @@ require 'active_support/core_ext/array/wrap'
 #
 # ### Basic options
 #
-# |                |                                               |
-# |:---------------|:----------------------------------------------|
-# | `:allow_nil`   | If `true`, `nil` values are allowed.          |
-# | `:allow_blank` | If `true`, `nil` or empty values are allowed. |
+# |                   |                                                             |
+# |:------------------|:------------------------------------------------------------|
+# | `:allow_nil`      | If `true`, `nil` values are allowed.                        |
+# | `:allow_blank`    | If `true`, `nil` or empty values are allowed.               |
+# | `:require_domain` | If `true`, A domain must be present to be considered valid. |
 #
 # ### Error messages
 #
@@ -156,14 +157,17 @@ class UrlValidator < ActiveModel::EachValidator
 
     case uri.scheme
       when 'http', 'https'
-        return http_url_format_valid?(uri)
+        return http_url_format_valid?(uri, options)
       else
         return true
     end
   end
 
-  def http_url_format_valid?(uri)
-    uri.host.present? and not uri.path.nil?
+  def http_url_format_valid?(uri, options)
+    valid_format = uri.host.present? and not uri.path.nil?
+    return valid_format unless options[:require_domain]
+
+    valid_format and uri.domain.present?
   end
 
   def url_accessible?(uri, options)

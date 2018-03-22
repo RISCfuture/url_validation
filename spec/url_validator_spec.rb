@@ -52,6 +52,15 @@ describe UrlValidator do
       expect(@record.errors).to be_empty
     end
 
+    it "should only allow URLs with a domain if :require_domain is set" do
+      @validator = UrlValidator.new(attributes: %i(field), require_domain: true)
+      @validator.validate_each(@record, :field, 'http://apple.com')
+      expect(@record.errors).to be_empty
+
+      @validator.validate_each(@record, :field, 'http://apple')
+      expect(@record.errors[:field].first).to include('invalid_url')
+    end
+
     context '[HTTP(S)]' do
       it "should not allow garbage URLs that still somehow pass the ridiculously open-ended RFC" do
         @validator = UrlValidator.new(attributes: %i(field))
