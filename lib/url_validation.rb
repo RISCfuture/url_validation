@@ -127,7 +127,7 @@ class UrlValidator < ActiveModel::EachValidator
       variant_also_negotiates:         506,
       insufficient_storage:            507,
       not_extended:                    510
-  }
+  }.freeze
 
   # @private
   def validate_each(record, attribute, value)
@@ -136,7 +136,7 @@ class UrlValidator < ActiveModel::EachValidator
     begin
       uri = Addressable::URI.parse(value)
 
-      if uri.scheme.nil? and options[:default_scheme]
+      if uri.scheme.nil? && options[:default_scheme]
         uri = Addressable::URI.parse("#{options[:default_scheme]}://#{value}")
       end
     rescue Addressable::URI::InvalidURIError
@@ -145,14 +145,14 @@ class UrlValidator < ActiveModel::EachValidator
     end
 
     record.errors.add(attribute, options[:invalid_url_message] || :invalid_url) unless url_format_valid?(uri, options)
-    record.errors.add(attribute, options[:url_not_accessible_message] || :url_not_accessible) unless response = url_accessible?(uri, options)
+    record.errors.add(attribute, options[:url_not_accessible_message] || :url_not_accessible) unless (response = url_accessible?(uri, options))
     record.errors.add(attribute, options[:url_invalid_response_message] || :url_invalid_response) unless url_response_valid?(response, options)
   end
 
   private
 
   def url_format_valid?(uri, options)
-    return false unless Array.wrap(options[:scheme] || %w(http https)).include?(uri.scheme)
+    return false unless Array.wrap(options[:scheme] || %w[http https]).include?(uri.scheme)
 
     case uri.scheme
       when 'http', 'https'
@@ -163,16 +163,16 @@ class UrlValidator < ActiveModel::EachValidator
   end
 
   def http_url_format_valid?(uri)
-    uri.host.present? and not uri.path.nil?
+    uri.host.present? && !uri.path.nil?
   end
 
   def url_accessible?(uri, options)
-    return true unless options[:check_host] or options[:check_path]
+    return true unless options[:check_host] || options[:check_path]
 
     check_host = options[:check_host]
-    check_host ||= %w(http https) if options[:check_path]
-    if (schemes = Array.wrap(check_host)) and schemes.all? { |scheme| scheme.kind_of?(String) }
-      return true unless schemes.include?(uri.scheme)
+    check_host ||= %w[http https] if options[:check_path]
+    if (schemes = Array.wrap(check_host)) && schemes.all? { |scheme| scheme.kind_of?(String) } && !schemes.include?(uri.scheme)
+      return true
     end
 
     case uri.scheme
@@ -187,12 +187,13 @@ class UrlValidator < ActiveModel::EachValidator
     request = HTTPI::Request.new(uri.to_s)
     options[:request_callback].call(request) if options[:request_callback].respond_to?(:call)
     return HTTPI.get(request, options[:httpi_adapter])
-  rescue
+  rescue StandardError
     return false
   end
 
   def url_response_valid?(response, options)
-    return true unless response.kind_of?(HTTPI::Response) and options[:check_path]
+    return true unless response.kind_of?(HTTPI::Response) && options[:check_path]
+
     response_codes = options[:check_path] == true ? [400..499, 500..599] : Array.wrap(options[:check_path]).flatten
     return response_codes.none? do |code| # it's good if it's not a bad response
       case code # and it's a bad response if...

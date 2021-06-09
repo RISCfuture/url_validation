@@ -3,8 +3,8 @@ require 'bundler'
 begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
-  $stderr.puts e.message
-  $stderr.puts "Run `bundle install` to install missing gems"
+  warn e.message
+  warn "Run `bundle install` to install missing gems"
   exit e.status_code
 end
 require 'rake'
@@ -12,8 +12,8 @@ require 'rake'
 require 'juwelier'
 Juwelier::Tasks.new do |gem|
   gem.name = 'url_validation'
-  gem.summary = %Q{Simple URL validation in Rails 3+}
-  gem.description = %Q{A simple, localizable EachValidator for URL fields in ActiveRecord 3.0.}
+  gem.summary = %(Simple URL validation in Rails 3+)
+  gem.description = %(A simple, localizable EachValidator for URL fields in ActiveRecord 3.0.)
   gem.email = 'git@timothymorgan.info'
   gem.homepage = 'http://github.com/riscfuture/url_validation'
   gem.authors = ['Tim Morgan']
@@ -29,7 +29,7 @@ YARD::Rake::YardocTask.new('doc') do |doc|
   doc.options << '-o' << 'doc'
   doc.options << '--title' << 'url_validation Documentation'.inspect
 
-  doc.files = %w(lib/**/*.rb README.md)
+  doc.files = %w[lib/**/*.rb README.md]
 end
 
 require 'rspec/core/rake_task'

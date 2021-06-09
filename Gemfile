@@ -1,18 +1,18 @@
 source 'https://rubygems.org'
 
-gem 'addressable', require: 'addressable/uri' # for unicode URIs
-gem 'activesupport'
 gem 'activerecord'
+gem 'activesupport'
+gem 'addressable', require: 'addressable/uri' # for unicode URIs
 gem 'httpi'
 
 group :development do
   # PUBLISHING
-  gem 'psych', '< 4.0' # jeweler incompatibility
   gem 'juwelier'
+  gem 'psych', '< 4.0' # jeweler incompatibility
 
   # DOCS
-  gem 'yard', require: nil
   gem 'redcarpet', require: nil
+  gem 'yard', require: nil
 
   # SPECS
   gem 'rspec'
