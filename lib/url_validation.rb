@@ -2,6 +2,7 @@ require 'addressable/uri'
 require 'httpi'
 require 'active_support/core_ext/hash/except'
 require 'active_model/validator'
+require 'active_support/core_ext/array/wrap'
 
 # Validates URLs. Uses the following I18n error message keys:
 #
