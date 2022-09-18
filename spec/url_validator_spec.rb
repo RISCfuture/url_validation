@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'active_model'
 
 class Record
   extend ActiveModel::Translation
@@ -6,20 +7,20 @@ class Record
   attr_accessor :field
 end
 
-describe UrlValidator do
+RSpec.describe UrlValidator do
   before :each do
     @record = Record.new
   end
 
   context '[basic]' do
     it "should allow nil if :allow_nil is set" do
-      @validator = UrlValidator.new(attributes: %i(field), allow_nil: true)
+      @validator = described_class.new(attributes: %i[field], allow_nil: true)
       @validator.validate_each(@record, :field, nil)
       expect(@record.errors).to be_empty
     end
 
     it "should allow \"\" if :allow_blank is set" do
-      @validator = UrlValidator.new(attributes: %i(field), allow_blank: true)
+      @validator = described_class.new(attributes: %i[field], allow_blank: true)
       @validator.validate_each(@record, :field, "")
       expect(@record.errors).to be_empty
     end
@@ -27,7 +28,7 @@ describe UrlValidator do
 
   context '[format]' do
     it "should only allow HTTP URLs if :scheme is set to 'http'" do
-      @validator = UrlValidator.new(attributes: %i(field), scheme: 'http')
+      @validator = described_class.new(attributes: %i[field], scheme: 'http')
       @validator.validate_each(@record, :field, 'http://www.apple.com')
       expect(@record.errors).to be_empty
 
@@ -36,7 +37,7 @@ describe UrlValidator do
     end
 
     it "should only allow HTTP and HTTPS URLs if :scheme is set to %w(http https)" do
-      @validator = UrlValidator.new(attributes: %i(field), scheme: %w(http https))
+      @validator = described_class.new(attributes: %i[field], scheme: %w[http https])
       @validator.validate_each(@record, :field, 'http://www.apple.com')
       expect(@record.errors).to be_empty
       @validator.validate_each(@record, :field, 'https://www.apple.com')
@@ -47,21 +48,22 @@ describe UrlValidator do
     end
 
     it "should try a default scheme if :default_scheme is set" do
-      @validator = UrlValidator.new(attributes: %i(field), scheme: 'http', default_scheme: 'http')
+      @validator = described_class.new(attributes: %i[field], scheme: 'http', default_scheme: 'http')
       @validator.validate_each(@record, :field, 'www.apple.com')
       expect(@record.errors).to be_empty
     end
 
     context '[HTTP(S)]' do
       it "should not allow garbage URLs that still somehow pass the ridiculously open-ended RFC" do
-        @validator = UrlValidator.new(attributes: %i(field))
+        @validator = described_class.new(attributes: %i[field])
 
-        %w(
+        %w[
             http:sdg.sdfg/
             http/sdg.d
             http:://dsfg.dsfg/
             http//sdg..g
-            http://://sdfg.f).each do |uri|
+            http://://sdfg.f
+        ].each do |uri|
           @record.errors.clear
           @validator.validate_each(@record, :field, uri)
           expect(@record.errors[:field].first).to include('invalid_url')
@@ -69,7 +71,7 @@ describe UrlValidator do
       end
 
       it "should not allow invalid scheme formats" do
-        @validator = UrlValidator.new(attributes: %i(field))
+        @validator = described_class.new(attributes: %i[field])
         @validator.validate_each(@record, :field, ' https://www.apple.com')
         expect(@record.errors[:field].first).to include('invalid_url')
       end
@@ -79,45 +81,45 @@ describe UrlValidator do
   context '[accessibility]' do
     context '[:check_host]' do
       it "should only validate if the host is accessible when :check_host is set" do
-        @validator = UrlValidator.new(attributes: %i(field))
+        @validator = described_class.new(attributes: %i[field])
         @validator.validate_each(@record, :field, 'http://www.invalid.tld')
         expect(@record.errors).to be_empty
 
-        @validator = UrlValidator.new(attributes: %i(field), check_host: true)
+        @validator = described_class.new(attributes: %i[field], check_host: true)
         @validator.validate_each(@record, :field, 'http://www.invalid.tld')
         expect(@record.errors[:field].first).to include('url_not_accessible')
       end
 
       it "should not perform the accessibility check if :check_host is set to 'http' and the URL scheme is not HTTP" do
-        @validator = UrlValidator.new(attributes: %i(field), check_host: 'http')
+        @validator = described_class.new(attributes: %i[field], check_host: 'http')
         @validator.validate_each(@record, :field, 'https://www.invalid.tld')
         expect(@record.errors).to be_empty
       end
 
       it "should only validate if the host is accessible when :check_host is set to 'http' and the URL scheme is HTTP" do
-        @validator = UrlValidator.new(attributes: %i(field), check_host: 'http')
+        @validator = described_class.new(attributes: %i[field], check_host: 'http')
         @validator.validate_each(@record, :field, 'http://www.invalid.tld')
         expect(@record.errors[:field].first).to include('url_not_accessible')
       end
 
       it "should not perform the accessibility check if :check_host is set to %w(http https) and the URL scheme is not HTTP(S)" do
-        @validator = UrlValidator.new(attributes: %i(field), check_host: %w(http https), scheme: %w(ftp http https))
+        @validator = described_class.new(attributes: %i[field], check_host: %w[http https], scheme: %w[ftp http https])
         @validator.validate_each(@record, :field, 'ftp://www.invalid.tld')
         expect(@record.errors).to be_empty
       end
 
       it "should only validate if the host is accessible when :check_host is set to %w(http https) and the URL scheme is HTTP(S)" do
-        @validator = UrlValidator.new(attributes: %i(field), check_host: %w(http https))
+        @validator = described_class.new(attributes: %i[field], check_host: %w[http https])
         @validator.validate_each(@record, :field, 'http://www.invalid.tld')
         expect(@record.errors[:field].first).to include('url_not_accessible')
 
-        @validator = UrlValidator.new(attributes: %i(field), check_host: %w(http https))
+        @validator = described_class.new(attributes: %i[field], check_host: %w[http https])
         @validator.validate_each(@record, :field, 'https://www.invalid.tld')
         expect(@record.errors[:field].first).to include('url_not_accessible')
       end
 
       it "should only validate the host" do
-        @validator = UrlValidator.new(attributes: %i(field), check_host: true)
+        @validator = described_class.new(attributes: %i[field], check_host: true)
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
         expect(@record.errors).to be_empty
       end
@@ -125,91 +127,91 @@ describe UrlValidator do
 
     context '[:check_path]' do
       it "should not validate if the response code is equal to the Integer value of this option" do
-        @validator = UrlValidator.new(attributes: %i(field), check_path: 404)
+        @validator = described_class.new(attributes: %i[field], check_path: 404)
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
         expect(@record.errors[:field].first).to include('url_invalid_response')
 
         @record.errors.clear
 
-        @validator = UrlValidator.new(attributes: %i(field), check_path: 405)
+        @validator = described_class.new(attributes: %i[field], check_path: 405)
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
         expect(@record.errors[:field]).to be_empty
       end
 
       it "should not validate if the response code is equal to the Symbol value of this option" do
-        @validator = UrlValidator.new(attributes: %i(field), check_path: :not_found)
+        @validator = described_class.new(attributes: %i[field], check_path: :not_found)
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
         expect(@record.errors[:field].first).to include('url_invalid_response')
 
         @record.errors.clear
 
-        @validator = UrlValidator.new(attributes: %i(field), check_path: :unauthorized)
+        @validator = described_class.new(attributes: %i[field], check_path: :unauthorized)
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
         expect(@record.errors[:field]).to be_empty
       end
 
       it "should not validate if the response code is within the Range value of this option" do
-        @validator = UrlValidator.new(attributes: %i(field), check_path: 400..499)
+        @validator = described_class.new(attributes: %i[field], check_path: 400..499)
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
         expect(@record.errors[:field].first).to include('url_invalid_response')
 
         @record.errors.clear
 
-        @validator = UrlValidator.new(attributes: %i(field), check_path: 500..599)
+        @validator = described_class.new(attributes: %i[field], check_path: 500..599)
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
         expect(@record.errors[:field]).to be_empty
       end
 
       it "should not validate if the response code is equal to the Integer value contained in the Array value of this option" do
-        @validator = UrlValidator.new(attributes: %i(field), check_path: [404, 405])
+        @validator = described_class.new(attributes: %i[field], check_path: [404, 405])
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
         expect(@record.errors[:field].first).to include('url_invalid_response')
 
         @record.errors.clear
 
-        @validator = UrlValidator.new(attributes: %i(field), check_path: [405, 406])
+        @validator = described_class.new(attributes: %i[field], check_path: [405, 406])
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
         expect(@record.errors[:field]).to be_empty
       end
 
       it "should not validate if the response code is equal to the Symbol value contained in the Array value of this option" do
-        @validator = UrlValidator.new(attributes: %i(field), check_path: %i(not_found unauthorized))
+        @validator = described_class.new(attributes: %i[field], check_path: %i[not_found unauthorized])
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
         expect(@record.errors[:field].first).to include('url_invalid_response')
 
         @record.errors.clear
 
-        @validator = UrlValidator.new(attributes: %i(field), check_path: %i(unauthorized moved_permanently))
+        @validator = described_class.new(attributes: %i[field], check_path: %i[unauthorized moved_permanently])
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
         expect(@record.errors[:field]).to be_empty
       end
 
       it "should not validate if the response code is equal to the Range value contained in the Array value of this option" do
-        @validator = UrlValidator.new(attributes: %i(field), check_path: [400..499, 500..599])
+        @validator = described_class.new(attributes: %i[field], check_path: [400..499, 500..599])
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
         expect(@record.errors[:field].first).to include('url_invalid_response')
 
         @record.errors.clear
 
-        @validator = UrlValidator.new(attributes: %i(field), check_path: [500..599, 300..399])
+        @validator = described_class.new(attributes: %i[field], check_path: [500..599, 300..399])
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
         expect(@record.errors[:field]).to be_empty
       end
 
       it "should skip validation by default" do
-        @validator = UrlValidator.new(attributes: %i(field), check_path: nil)
+        @validator = described_class.new(attributes: %i[field], check_path: nil)
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
         expect(@record.errors[:field]).to be_empty
       end
 
       it "should not validate 4xx and 5xx response codes if the value is true" do
-        @validator = UrlValidator.new(attributes: %i(field), check_path: true)
+        @validator = described_class.new(attributes: %i[field], check_path: true)
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
         expect(@record.errors[:field].first).to include('url_invalid_response')
       end
 
       it "should skip validation for non-HTTP URLs" do
-        @validator = UrlValidator.new(attributes: %i(field), check_path: true, scheme: %w(ftp http https))
+        @validator = described_class.new(attributes: %i[field], check_path: true, scheme: %w[ftp http https])
         @validator.validate_each(@record, :field, 'ftp://ftp.sdgasdgohaodgh.com/sdgjsdg')
         expect(@record.errors[:field]).to be_empty
       end
@@ -217,7 +219,7 @@ describe UrlValidator do
 
     context '[:httpi_adapter]' do
       it "should use the specified HTTPI adapter" do
-        @validator = UrlValidator.new(attributes: %i(field), httpi_adapter: :curl, check_host: true)
+        @validator = described_class.new(attributes: %i[field], httpi_adapter: :curl, check_host: true)
         expect(HTTPI).to receive(:get).once.with(an_instance_of(HTTPI::Request), :curl).and_return(false)
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
       end
@@ -226,9 +228,9 @@ describe UrlValidator do
     context '[:request_callback]' do
       it "should be yielded the HTTPI request" do
         called     = false
-        @validator = UrlValidator.new(attributes: %i(field), check_host: true, request_callback: ->(request) { called = true; expect(request).to be_kind_of(HTTPI::Request) })
+        @validator = described_class.new(attributes: %i[field], check_host: true, request_callback: ->(request) { called = true; expect(request).to be_kind_of(HTTPI::Request) })
         @validator.validate_each(@record, :field, 'http://www.google.com/sdgsdgf')
-        expect(called).to eql(true)
+        expect(called).to be(true)
       end
     end
   end
