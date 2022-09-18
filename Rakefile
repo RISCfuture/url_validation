@@ -9,30 +9,30 @@ rescue Bundler::BundlerError => e
 end
 require 'rake'
 
-require 'jeweler'
-Jeweler::Tasks.new do |gem|
-  gem.name = "url_validation"
-  gem.summary = %Q{Simple URL validation in Rails 3}
+require 'juwelier'
+Juwelier::Tasks.new do |gem|
+  gem.name = 'url_validation'
+  gem.summary = %Q{Simple URL validation in Rails 3+}
   gem.description = %Q{A simple, localizable EachValidator for URL fields in ActiveRecord 3.0.}
-  gem.email = "git@timothymorgan.info"
-  gem.homepage = "http://github.com/riscfuture/url_validation"
-  gem.authors = [ "Tim Morgan" ]
-  gem.required_ruby_version = '>= 1.8.7'
+  gem.email = 'git@timothymorgan.info'
+  gem.homepage = 'http://github.com/riscfuture/url_validation'
+  gem.authors = ['Tim Morgan']
+  gem.required_ruby_version = '>= 2.0.0'
 end
-Jeweler::RubygemsDotOrgTasks.new
+Juwelier::RubygemsDotOrgTasks.new
 
 require 'yard'
 YARD::Rake::YardocTask.new('doc') do |doc|
-  doc.options << "-m" << "textile"
-  doc.options << "--protected" << "--no-private"
-  doc.options << "-r" << "README.textile"
-  doc.options << "-o" << "doc"
-  doc.options << "--title" << "url_validation Documentation".inspect
-  
-  doc.files = [ 'lib/*_validator.rb', 'README.textile' ]
+  doc.options << '-m' << 'markdown' << '-M' << 'redcarpet'
+  doc.options << '--protected' << '--no-private'
+  doc.options << '-r' << 'README.md'
+  doc.options << '-o' << 'doc'
+  doc.options << '--title' << 'url_validation Documentation'.inspect
+
+  doc.files = %w(lib/**/*.rb README.md)
 end
 
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new
 
-task :default => :spec
+task default: :spec
