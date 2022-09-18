@@ -227,5 +227,14 @@ describe UrlValidator do
         called.should be_true
       end
     end
+
+    context "[:response_callback]" do
+      it "should be yielded the HTTPI response" do
+        called = false
+        @validator = UrlValidator.new(:attributes => [ :field ], :check_path => true, :response_callback => lambda { |response, record, attribute, value| called = true; response.should be_kind_of(HTTPI::Response) })
+        @validator.validate_each(@record, :field, "http://www.google.com/sdgsdgf")
+        called.should be_true
+      end
+    end
   end
 end
