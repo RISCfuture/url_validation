@@ -1,4 +1,4 @@
-source :rubygems
+source 'https://rubygems.org'
 
 gem 'addressable', :require => 'addressable/uri' # for unicode URIs
 gem 'activesupport'
