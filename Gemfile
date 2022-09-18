@@ -7,6 +7,7 @@ gem 'httpi'
 
 group :development do
   # PUBLISHING
+  gem 'psych', '< 4.0' # jeweler incompatibility
   gem 'juwelier'
 
   # DOCS
