@@ -119,12 +119,16 @@ class UrlValidator < ActiveModel::EachValidator
         
   # @private
   def validate_each(record, attribute, value)
-    return if options[:allow_nil] and value.nil?
-    return if options[:allow_blank] and value.blank?
-    
-    uri = Addressable::URI.parse(value)
-    if uri.scheme.nil? and options[:default_scheme] then
-      uri = Addressable::URI.parse("#{options[:default_scheme]}://#{value}")
+    return if value.blank?
+
+    begin
+      uri = Addressable::URI.parse(value)
+      if uri.scheme.nil? and options[:default_scheme] then
+        uri = Addressable::URI.parse("#{options[:default_scheme]}://#{value}")
+      end
+    rescue Addressable::URI::InvalidURIError
+      record.errors.add(attribute, options[:invalid_url_message]          || :invalid_url)          unless url_format_valid?(uri, options)
+      return
     end
     
     record.errors.add(attribute, options[:invalid_url_message]          || :invalid_url)          unless url_format_valid?(uri, options)
