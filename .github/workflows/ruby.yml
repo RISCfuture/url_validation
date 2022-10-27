@@ -33,3 +33,24 @@ jobs:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - name: Run unit tests
         run: bundle exec rake
+
+  linters:
+    name: Linters
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.1"
+          bundler-cache: true
+      - name: Run Rubocop
+        run: |
+          gem install rubocop-rspec rubocop-performance
+          git clone https://gist.github.com/65e21b9e8b0d1db285dcb4fc627b98fa.git .rubocop
+          cp .rubocop/.rubocop.yml .rubocop-ruby.yml
+          git clone https://gist.github.com/14cfa24d53c12bf385871e9b93b95c37.git .rubocop-rspec
+          cp .rubocop-rspec/.rubocop-rspec.yml .
+          cat .rubocop.yml | sed -e 's/~\/.rubocop/.rubocop/' | sed -e 's/.rubocop.yml/.rubocop-ruby.yml/' > .rubocop2.yml
+          mv .rubocop2.yml .rubocop.yml
+          rubocop --parallel

@@ -1,0 +1,13 @@
+inherit_from:
+  - ~/.rubocop.yml
+  - ~/.rubocop-rspec.yml
+
+inherit_mode:
+  merge:
+    - Include
+    - Exclude
+    - Environments
+
+AllCops:
+  Exclude:
+    - "*.gemspec" # temporarily until we move off of juweiler

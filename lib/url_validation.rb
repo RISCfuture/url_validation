@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'addressable/uri'
 require 'httpi'
 require 'active_support/core_ext/hash/except'
@@ -171,7 +173,7 @@ class UrlValidator < ActiveModel::EachValidator
 
     check_host = options[:check_host]
     check_host ||= %w[http https] if options[:check_path]
-    if (schemes = Array.wrap(check_host)) && schemes.all? { |scheme| scheme.kind_of?(String) } && !schemes.include?(uri.scheme)
+    if (schemes = Array.wrap(check_host)) && schemes.all?(String) && !schemes.include?(uri.scheme)
       return true
     end
 
@@ -194,7 +196,7 @@ class UrlValidator < ActiveModel::EachValidator
   def url_response_valid?(response, options)
     return true unless response.kind_of?(HTTPI::Response) && options[:check_path]
 
-    response_codes = options[:check_path] == true ? [400..499, 500..599] : Array.wrap(options[:check_path]).flatten
+    response_codes = (options[:check_path] == true) ? [400..499, 500..599] : Array.wrap(options[:check_path]).flatten
     return response_codes.none? do |code| # it's good if it's not a bad response
       case code # and it's a bad response if...
         when Range
