@@ -97,4 +97,4 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 end
 
-require 'url_validation'
+require "url_validation"

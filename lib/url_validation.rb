@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'addressable/uri'
-require 'httpi'
-require 'active_support/core_ext/hash/except'
-require 'active_model/validator'
-require 'active_support/core_ext/array/wrap'
+require "addressable/uri"
+require "httpi"
+require "active_support/core_ext/hash/except"
+require "active_model/validator"
+require "active_support/core_ext/array/wrap"
 
 # Validates URLs. Uses the following I18n error message keys:
 #
@@ -157,7 +157,7 @@ class UrlValidator < ActiveModel::EachValidator
     return false unless Array.wrap(options[:scheme] || %w[http https]).include?(uri.scheme)
 
     case uri.scheme
-      when 'http', 'https'
+      when "http", "https"
         return http_url_format_valid?(uri)
       else
         return true
@@ -178,7 +178,7 @@ class UrlValidator < ActiveModel::EachValidator
     end
 
     case uri.scheme
-      when 'http', 'https'
+      when "http", "https"
         return http_url_accessible?(uri, options)
       else
         return true

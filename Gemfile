@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
-gem 'activerecord'
-gem 'activesupport'
-gem 'addressable', require: 'addressable/uri' # for unicode URIs
-gem 'httpi'
+gem "activerecord"
+gem "activesupport"
+gem "addressable", require: "addressable/uri" # for unicode URIs
+gem "httpi"
 
 group :development do
   # PUBLISHING
-  gem 'juwelier'
-  gem 'psych', '< 4.0' # jeweler incompatibility
+  gem "juwelier"
+  gem "psych", "< 4.0" # jeweler incompatibility
 
   # DOCS
-  gem 'redcarpet', require: nil
-  gem 'yard', require: nil
+  gem "redcarpet", require: nil
+  gem "yard", require: nil
 
   # SPECS
-  gem 'rspec'
+  gem "rspec"
 end
