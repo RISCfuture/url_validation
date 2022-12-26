@@ -1,24 +1,24 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (7.0.4)
-      activesupport (= 7.0.4)
-    activerecord (7.0.4)
-      activemodel (= 7.0.4)
-      activesupport (= 7.0.4)
-    activesupport (7.0.4)
+    activemodel (7.0.7.2)
+      activesupport (= 7.0.7.2)
+    activerecord (7.0.7.2)
+      activemodel (= 7.0.7.2)
+      activesupport (= 7.0.7.2)
+    activesupport (7.0.7.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-    addressable (2.8.1)
+    addressable (2.8.5)
       public_suffix (>= 2.0.2, < 6.0)
     builder (3.2.4)
-    concurrent-ruby (1.1.10)
+    concurrent-ruby (1.2.2)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.5.0)
-    faraday (1.10.2)
+    faraday (1.10.3)
       faraday-em_http (~> 1.0)
       faraday-em_synchrony (~> 1.0)
       faraday-excon (~> 1.1)
@@ -41,7 +41,7 @@ GEM
     faraday-patron (1.0.0)
     faraday-rack (1.0.0)
     faraday-retry (1.0.3)
-    git (1.12.0)
+    git (1.18.0)
       addressable (~> 2.8)
       rchardet (~> 1.8)
     github_api (0.19.0)
@@ -51,10 +51,10 @@ GEM
       hashie (~> 3.5, >= 3.5.2)
       oauth2 (~> 1.0)
     hashie (3.6.0)
-    highline (2.0.3)
+    highline (2.1.0)
     httpi (3.0.1)
       rack
-    i18n (1.12.0)
+    i18n (1.14.1)
       concurrent-ruby (~> 1.0)
     juwelier (2.4.9)
       builder
@@ -68,16 +68,16 @@ GEM
       rake
       rdoc
       semver2
-    jwt (2.5.0)
+    jwt (2.7.1)
     kamelcase (0.0.2)
       semver2 (~> 3)
-    mini_portile2 (2.8.0)
-    minitest (5.16.3)
+    minitest (5.19.0)
     multi_json (1.15.0)
     multi_xml (0.6.0)
-    multipart-post (2.2.3)
-    nokogiri (1.13.9)
-      mini_portile2 (~> 2.8.0)
+    multipart-post (2.3.0)
+    nokogiri (1.15.4-arm64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.15.4-x86_64-linux)
       racc (~> 1.4)
     oauth2 (1.4.11)
       faraday (>= 0.17.3, < 3.0)
@@ -86,37 +86,36 @@ GEM
       multi_xml (~> 0.5)
       rack (>= 1.2, < 4)
     psych (3.3.4)
-    public_suffix (5.0.0)
-    racc (1.6.0)
-    rack (3.0.1)
+    public_suffix (5.0.3)
+    racc (1.7.1)
+    rack (3.0.8)
     rake (13.0.6)
     rchardet (1.8.0)
     rdoc (6.3.3)
-    redcarpet (3.5.1)
+    redcarpet (3.6.0)
     rspec (3.12.0)
       rspec-core (~> 3.12.0)
       rspec-expectations (~> 3.12.0)
       rspec-mocks (~> 3.12.0)
-    rspec-core (3.12.0)
+    rspec-core (3.12.2)
       rspec-support (~> 3.12.0)
-    rspec-expectations (3.12.0)
+    rspec-expectations (3.12.3)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
-    rspec-mocks (3.12.0)
+    rspec-mocks (3.12.6)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
-    rspec-support (3.12.0)
+    rspec-support (3.12.1)
     ruby2_keywords (0.0.5)
     semver2 (3.4.2)
     thread_safe (0.3.6)
-    tzinfo (2.0.5)
+    tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
-    webrick (1.7.0)
-    yard (0.9.28)
-      webrick (~> 1.7.0)
+    yard (0.9.34)
 
 PLATFORMS
-  ruby
+  arm64-darwin-22
+  x86_64-linux
 
 DEPENDENCIES
   activerecord
@@ -130,4 +129,4 @@ DEPENDENCIES
   yard
 
 BUNDLED WITH
-   2.3.26
+   2.4.19

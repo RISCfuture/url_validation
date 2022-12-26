@@ -21,7 +21,7 @@ valid endpoints.
 Add the gem to your project's Gemfile:
 
 ``` ruby
-gem 'url_validation'
+gem "url_validation"
 ```
 
 ## Usage
@@ -32,7 +32,7 @@ This gem is an `EachValidator`, and thus is used with the `validates` method:
 class User < ActiveRecord::Base
   validates :terms_of_service_link,
             presence: true,
-            url: true
+            url:      true
 end
 ```
 
