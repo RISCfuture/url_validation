@@ -19,10 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby-version: ["3.2"]
+        ruby-version: ["3.3"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Ruby
         # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
         # change this to (see https://github.com/ruby/setup-ruby#versioning):
@@ -38,15 +38,15 @@ jobs:
     name: Linters
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.2"
+          ruby-version: "3.3"
           bundler-cache: true
       - name: Run Rubocop
         run: |
-          gem install rubocop-rspec rubocop-performance rubocop-rake rubocop-md
+          gem install rubocop-rails rubocop-rspec rubocop-performance rubocop-md rubocop-rake rubocop-graphql rubocop-rspec_rails rubocop-sidekiq rubocop-yard rubocop-factory_bot
           git clone https://gist.github.com/65e21b9e8b0d1db285dcb4fc627b98fa.git .rubocop
           cp .rubocop/.rubocop.yml .rubocop-ruby.yml
           git clone https://gist.github.com/14cfa24d53c12bf385871e9b93b95c37.git .rubocop-rspec
