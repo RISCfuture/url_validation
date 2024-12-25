@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby-version: ["3.3"]
+        ruby-version: ["3.4"]
 
     steps:
       - uses: actions/checkout@v4
@@ -42,15 +42,13 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.3"
+          ruby-version: .ruby-version
           bundler-cache: true
       - name: Run Rubocop
         run: |
           gem install rubocop-rails rubocop-rspec rubocop-performance rubocop-md rubocop-rake rubocop-graphql rubocop-rspec_rails rubocop-sidekiq rubocop-yard rubocop-factory_bot
-          git clone https://gist.github.com/65e21b9e8b0d1db285dcb4fc627b98fa.git .rubocop
-          cp .rubocop/.rubocop.yml .rubocop-ruby.yml
-          git clone https://gist.github.com/14cfa24d53c12bf385871e9b93b95c37.git .rubocop-rspec
-          cp .rubocop-rspec/.rubocop-rspec.yml .
+          curl https://gist.githubusercontent.com/RISCfuture/65e21b9e8b0d1db285dcb4fc627b98fa/raw/.rubocop.yml > .rubocop-ruby.yml
+          curl -O https://gist.githubusercontent.com/RISCfuture/14cfa24d53c12bf385871e9b93b95c37/raw/.rubocop-rspec.yml
           cat .rubocop.yml | sed -e 's/~\/.rubocop/.rubocop/' | sed -e 's/.rubocop.yml/.rubocop-ruby.yml/' > .rubocop2.yml
           mv .rubocop2.yml .rubocop.yml
           rubocop --parallel
