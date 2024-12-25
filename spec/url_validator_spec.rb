@@ -6,6 +6,7 @@ require "active_model"
 class Record
   extend ActiveModel::Translation
   include ActiveModel::Validations
+
   attr_accessor :field
 end
 
