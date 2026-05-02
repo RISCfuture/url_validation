@@ -1,5 +1,9 @@
 # url_validation
 
+[![CI](https://github.com/RISCfuture/url_validation/actions/workflows/ruby.yml/badge.svg)](https://github.com/RISCfuture/url_validation/actions/workflows/ruby.yml)
+[![Gem Version](https://img.shields.io/gem/v/url_validation.svg)](https://rubygems.org/gems/url_validation)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Simple URL validator for Rails 3.
 
 |             |                                 |
