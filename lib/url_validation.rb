@@ -6,6 +6,8 @@ require "active_support/core_ext/hash/except"
 require "active_model/validator"
 require "active_support/core_ext/array/wrap"
 
+require "url_validation/version"
+
 # Validates URLs. Uses the following I18n error message keys:
 #
 # |                        |                                                                 |
@@ -31,6 +33,9 @@ require "active_support/core_ext/array/wrap"
 #     check_host: true,
 #     request_callback: ->(request) { request.timeout = 30 }
 #   }
+#
+# @example Uses a GET request instead of the default HEAD request
+#   validates :link, url: {check_host: true, http_method: :get}
 #
 # ## Options
 #
@@ -63,11 +68,16 @@ require "active_support/core_ext/array/wrap"
 # you wish to use. This allows you to drop in, e.g., a Curl client if you want.
 # You can set the HTTPI adapter with the `:httpi_adapter` option.
 #
+# By default, HEAD requests are used for accessibility checks. If a server does
+# not support HEAD requests, you can set `:http_method` to `:get` (or any other
+# verb supported by HTTPI).
+#
 # |                  |                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 # |:-----------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 # | `:check_host`    | If `true`, the validator will perform a network test to verify that it can connect to the server and access the host (at the "/" path). This check will only be performed for HTTP(S) URLs.                                                                                                                                                                                                                                                            |
 # | `:check_path`    | An integer or symbol (or array of integers or symbols), such as 301 or `:moved_permanently`, indicating what response codes are unacceptable. You can also use ranges, and include them in an array, such as `[:moved_permanently, 400..404, 500..599]`. By default, this is `nil`, and therefore only host accessibility is checked. If `true` is given, uses a default set of invalid error codes (4xx and 5xx). Implies `:check_host` is also true. |
 # | `:httpi_adapter` | The HTTPI adapter to use for checking HTTP and HTTPS URLs (default set by the HTTPI gem).                                                                                                                                                                                                                                                                                                                                                              |
+# | `:http_method`   | The HTTP verb (as a Symbol) to use for the accessibility check. Defaults to `:head`. Set to `:get` for servers that do not support HEAD.                                                                                                                                                                                                                                                                                                               |
 #
 # ### Other options
 #
@@ -76,6 +86,8 @@ require "active_support/core_ext/array/wrap"
 # | `:request_callback` | A proc that receives the request object (for HTTP(S) requests, the `HTTPI::Request` object) before it is executed. You can use this proc to set, e.g., custom headers or timeouts on the request. |
 
 class UrlValidator < ActiveModel::EachValidator
+  VERSION = UrlValidation::VERSION
+
   # @private
   CODES = {
       continue:                        100,
@@ -133,8 +145,9 @@ class UrlValidator < ActiveModel::EachValidator
 
   # @private
   def validate_each(record, attribute, value)
-    return if value.blank?
+    return if value.blank? && options.fetch(:allow_blank, true)
 
+    uri = nil
     begin
       uri = Addressable::URI.parse(value)
 
@@ -142,7 +155,7 @@ class UrlValidator < ActiveModel::EachValidator
         uri = Addressable::URI.parse("#{options[:default_scheme]}://#{value}")
       end
     rescue Addressable::URI::InvalidURIError
-      record.errors.add(attribute, options[:invalid_url_message] || :invalid_url) if uri.nil? || !url_format_valid?(uri, options)
+      record.errors.add(attribute, options[:invalid_url_message] || :invalid_url)
       return
     end
 
@@ -188,7 +201,8 @@ class UrlValidator < ActiveModel::EachValidator
   def http_url_accessible?(uri, options)
     request = HTTPI::Request.new(uri.to_s)
     options[:request_callback].call(request) if options[:request_callback].respond_to?(:call)
-    return HTTPI.get(request, options[:httpi_adapter])
+    method = options[:http_method] || :head
+    return HTTPI.request(method, request, options[:httpi_adapter])
   rescue StandardError
     return false
   end

@@ -2,20 +2,11 @@
 
 source "https://rubygems.org"
 
-gem "activerecord"
-gem "activesupport"
-gem "addressable", require: "addressable/uri" # for unicode URIs
-gem "httpi"
+gemspec
 
-group :development do
-  # PUBLISHING
-  gem "juwelier"
-  gem "psych", "< 4.0" # jeweler incompatibility
-
-  # DOCS
-  gem "redcarpet", require: nil
-  gem "yard", require: nil
-
-  # SPECS
-  gem "rspec"
+# Allow CI to pin a specific ActiveModel/ActiveSupport major.minor to test
+# against the matrix without maintaining separate gemfiles.
+if (version = ENV["ACTIVEMODEL_VERSION"])
+  gem "activemodel",   "~> #{version}.0"
+  gem "activesupport", "~> #{version}.0"
 end
