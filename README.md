@@ -39,6 +39,7 @@ class User
   include ActiveModel::Validations
 
   attr_accessor :terms_of_service_link
+
   validates :terms_of_service_link, presence: true, url: true
 end
 ```
@@ -68,8 +69,8 @@ validates :link, url: {check_host: true, http_method: :get}
 
 # Customize the HTTPI request (timeouts, headers, etc.)
 validates :link, url: {
-  check_host:       true,
-  request_callback: ->(request) { request.open_timeout = 5; request.read_timeout = 5 }
+    check_host:       true,
+    request_callback: ->(request) { request.open_timeout = 5; request.read_timeout = 5 }
 }
 ```
 
