@@ -3,3 +3,8 @@
 source "https://rubygems.org"
 
 gemspec
+
+group :development do
+  gem "redcarpet", require: false
+  gem "yard", require: false
+end
