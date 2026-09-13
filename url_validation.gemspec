@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
     "homepage_uri"          => spec.homepage,
     "documentation_uri"     => "https://riscfuture.github.io/url_validation/",
     "bug_tracker_uri"       => "#{spec.homepage}/issues",
-    "changelog_uri"         => "#{spec.homepage}/blob/master/CHANGELOG.md",
+    "changelog_uri"         => "#{spec.homepage}/blob/main/CHANGELOG.md",
     "rubygems_mfa_required" => "true"
   }
 
